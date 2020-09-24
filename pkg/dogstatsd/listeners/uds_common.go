@@ -56,10 +56,7 @@ type UDSListener struct {
 }
 
 // NewUDSListener returns an idle UDS Statsd listener
-func NewUDSListener(packetOut chan Packets, sharedPacketPool *PacketPool) (*UDSListener, error) {
-	socketPath := config.Datadog.GetString("dogstatsd_socket")
-	originDetection := config.Datadog.GetBool("dogstatsd_origin_detection")
-
+func NewUDSListener(socketPath string, originDetection bool, packetOut chan Packets, sharedPacketPool *PacketPool) (*UDSListener, error) {
 	address, addrErr := net.ResolveUnixAddr("unixgram", socketPath)
 	if addrErr != nil {
 		return nil, fmt.Errorf("dogstatsd-uds: can't ResolveUnixAddr: %v", addrErr)

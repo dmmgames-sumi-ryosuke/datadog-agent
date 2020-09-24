@@ -1011,6 +1011,11 @@ api_key:
 #
 # dogstatsd_socket: ""
 
+## @param dogstatsd_socket_telemetry - string - optional - default: ""
+## Listen to an extra socket to receive telemetry from clients
+#
+# dogstatsd_socket_telemetry: ""
+
 ## @param dogstatsd_origin_detection - boolean - optional - default: false
 ## When using Unix Socket, DogStatsD can tag metrics with container metadata.
 ## If running DogStatsD in a container, host PID mode (e.g. with --pid=host) is required.

@@ -147,12 +147,23 @@ func NewServer(aggregator *aggregator.BufferedAggregator) (*Server, error) {
 	sharedPacketPool := listeners.NewPacketPool(config.Datadog.GetInt("dogstatsd_buffer_size"))
 
 	socketPath := config.Datadog.GetString("dogstatsd_socket")
+	originDetection := config.Datadog.GetBool("dogstatsd_origin_detection")
 	if len(socketPath) > 0 {
-		unixListener, err := listeners.NewUDSListener(packetsChannel, sharedPacketPool)
+		unixListener, err := listeners.NewUDSListener(socketPath, originDetection, packetsChannel, sharedPacketPool)
 		if err != nil {
 			log.Errorf(err.Error())
 		} else {
 			tmpListeners = append(tmpListeners, unixListener)
+		}
+	}
+	socketPathTelemetry := config.Datadog.GetString("dogstatsd_socket_telemetry")
+	if len(socketPathTelemetry) > 0 {
+		telemetryListener, err := listeners.NewUDSListener(socketPathTelemetry, originDetection, packetsChannel, sharedPacketPool)
+		if err != nil {
+			log.Errorf(err.Error())
+		} else {
+			log.Debugf("enabling telemetry socket on %s", socketPathTelemetry)
+			tmpListeners = append(tmpListeners, telemetryListener)
 		}
 	}
 	if config.Datadog.GetInt("dogstatsd_port") > 0 {
